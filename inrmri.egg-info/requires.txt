@@ -1,0 +1,10 @@
+flax
+optax
+image-similarity-measures
+ipykernel
+matplotlib
+numpy
+scikit-image
+scipy
+tqdm
+wonderwords
