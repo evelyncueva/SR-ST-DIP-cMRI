@@ -11,3 +11,7 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Media
+*.gif
+*.mp4
