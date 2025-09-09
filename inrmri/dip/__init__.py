@@ -503,6 +503,55 @@ def circle_generator(nframes, key, addConst, radius=1.0):
     return circle
 
 def multi_slice_circle_generator(nframes, num_slices, key, addConst, radius=1.0, z_min=-1.0, z_max=1.0):
+    """
+    Generate a set of circular trajectories across multiple slices along the z-axis.
+
+    This function creates `num_slices` circles distributed linearly between `z_min` and `z_max`. 
+    Each circle is parameterized by `nframes` points along its circumference, 
+    representing a uniform sampling of the unit circle scaled by `radius`.
+
+    Optionally, a constant random value can be appended to each point as an additional dimension.
+
+    Parameters
+    ----------
+    nframes : int
+        Number of points (frames) sampled along the circumference of each circle.
+    num_slices : int
+        Number of slices (planes along the z-axis) in which circles will be generated.
+    key : jax.random.PRNGKey
+        Random key used to generate the optional constant value.
+    addConst : bool
+        If True, appends a random constant dimension to each point.
+    radius : float, optional (default=1.0)
+        Radius of the circles.
+    z_min : float, optional (default=-1.0)
+        Minimum z-coordinate (lower bound of the slices).
+    z_max : float, optional (default=1.0)
+        Maximum z-coordinate (upper bound of the slices).
+
+    Returns
+    -------
+    jax.numpy.ndarray
+        A stacked array of shape `(num_slices, nframes, 3)` if `addConst=False`, 
+        or `(num_slices, nframes, 4)` if `addConst=True`.
+
+        - First dimension: slice index
+        - Second dimension: frame index along the circle
+        - Last dimension: coordinates `[x, y, z]` or `[x, y, z, const]`
+
+    Examples
+    --------
+    >>> import jax
+    >>> key = jax.random.key(0)
+    >>> arr = multi_slice_circle_generator(5, 2, key, addConst=False, radius=2.0)
+    >>> arr.shape
+    (2, 5, 3)
+
+    >>> arr = multi_slice_circle_generator(5, 2, key, addConst=True)
+    >>> arr.shape
+    (2, 5, 4)
+    """
+
     ts = jnp.linspace(0, 1, nframes, endpoint=False)
     ss = jnp.linspace(z_min, z_max, num_slices, endpoint=True)
     constant_value = jax.random.uniform(key, ())
@@ -726,9 +775,7 @@ class MS_TD_DIP_Net:
                  momentum         : float = 0.99,
                  levels           : int = 3
                  ):
-        """
-        - `latent_generator`: Callable(int, int) que devuelve un array de tamaño (nframes, N), donde N es algun número arbitrario de features.
-        """
+
         self.nframes = nframes
         self.n_slices = n_slices
         self.imshape = imshape
