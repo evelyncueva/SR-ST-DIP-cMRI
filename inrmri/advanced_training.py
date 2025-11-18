@@ -298,13 +298,17 @@ def train_with_updates_ms_nspokeswise_select(
         # build nspokes-wise, per-slice batches
         Xb, Yb = [], []
         for item in range(len(X_list)):
-            X = X_list[item]; Y = Y_list[item]
+            X = X_list[item]
+            Y = Y_list[item]
             idx_groups = [np.where(np.abs(X[:, 1] - t) < epsilon)[0] for t in times_batch]
             group_inds = sample_from_groups(idx_groups, nspokes, key)
             Xb.append(np.stack([X[g] for g in group_inds]))
             Yb.append(np.stack([Y[g] for g in group_inds]))
         X_batch_array = np.stack(Xb); Y_batch_array = np.stack(Yb)
-
+        print("Despues de la extraccion")
+        print(X_batch_array)
+        print("El paso del entrenamiento empieza")
+        print(f"con X {X_batch_array.shape} y Y {Y_batch_array.shape}")
         params, opt_state, train_loss_value = step(params, X_batch_array, Y_batch_array, index_frames, key_loss, it)
 
         # ---- lightweight logs always

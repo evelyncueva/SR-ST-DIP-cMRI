@@ -1,0 +1,3 @@
+select_by;duration [s];duration [min];duration;it;loss;time;experiment_folder;training_name;training_folder;mean_var;var;ssim;psnr;ap
+loss;260.9747095108032;4.34957849184672;0h 4m 20.97s;205;0.026591813191771507;170.15248322486877;stDIP/slice_3_8_nbins30/select_by/;select_by=loss;stDIP/slice_3_8_nbins30/select_by/select_by=loss/;;;;;
+mean_var;341.6289966106415;5.693816610177358;0h 5m 41.63s;340;;262.0077567100525;stDIP/slice_3_8_nbins30/select_by/;select_by=mean_var;stDIP/slice_3_8_nbins30/select_by/select_by=mean_var/;0.012092547491192818;0.01664183847606182;0.8058435916900635;21.41142463684082;0.2473929077386856

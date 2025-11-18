@@ -15,6 +15,7 @@ Thumbs.db
 # Media
 *.gif
 *.mp4
+*.png
 
 # Results
 results/

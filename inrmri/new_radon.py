@@ -164,18 +164,24 @@ def get_weight_freqs(N:int, str_filter:str='ramp'):
 def make_forward_radon_operator(csmap, spclim=0.5):
     N = csmap.shape[1]
     ds = get_radon_ds_from_N(N)
-
+    
     def radon_transform(im, alphas):
         """
         - im: (batch, px, py)
         - alphas: (batch,)
         """
         im = np.moveaxis(im, 0, -1)  # (px, py, batch)
+        # agregar ncoils dim a im y batch a csmap antes de multiplicar
         im = im[None, :, :, :] * csmap[:, :, :, None]  # (ncoils, px, py, batch)
-        im = np.moveaxis(im, -1, 1)  # (ncoils, batch, px, py)
+        # cambiar la dimension a (ncoils, batch, px, py)
+        im = np.moveaxis(im, -1, 1)  
+        # rotar la imagen alfa grados
+        print(f"se va a rotar una imagen de tamano {im.shape} en angulos {alphas}")
         im = jax.vmap(rotate, in_axes=(1, 0))(im, alphas)  # (batch, ncoils, px, py)
-        im = radon_integration(im, ds, axis=-1)  # (batch, ncoils, px)
-        im = fastshiftfourier(im * spclim * 2)
+        # transformada de radon (integrar=sumar)
+        im = radon_integration(im, ds, axis=-1)  # (batch, ncoils, nsamples)
+        # transformada de fourier (a spoke) de tamaño px=py
+        im = fastshiftfourier(im * spclim * 2) # (batch, ncoils, nsamples)
         return im
 
     return radon_transform
